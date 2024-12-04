@@ -33,3 +33,7 @@ Utilize the prepared dataset to develop a disease classification model.
 Experiment with different classification algorithms, evaluate their performance, and document the results.
 
 **Insights and results from the classification model.**
+
+Results for the first version of the Neural Network:
+
+Loss: 0.903, Accuracy: 0.667
