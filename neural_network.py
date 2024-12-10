@@ -1,13 +1,14 @@
 import matplotlib.pyplot as plt
 from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import Conv2D, MaxPooling2D, Dense, Dropout, GlobalAveragePooling2D
+from tensorflow.keras import regularizers
+from tensorflow.keras.layers import Conv2D, MaxPooling2D, Dense, Dropout, GlobalAveragePooling2D, BatchNormalization
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 from tensorflow.keras.callbacks import EarlyStopping
 
 # Configuraciones básicas
 IMG_HEIGHT = 150  # Altura a la que redimensionaremos
 IMG_WIDTH = 150   # Anchura a la que redimensionaremos
-BATCH_SIZE = 32
+BATCH_SIZE = 64
 NUM_CLASSES = 7   # Número de categorías de enfermedades
 EPOCHS = 20
 
@@ -36,18 +37,29 @@ validation_data = datagen.flow_from_directory(
     subset='validation'
 )
 
+
+
 # Definición del modelo
 model = Sequential([
     Conv2D(32, (3, 3), activation='relu', input_shape=(IMG_HEIGHT, IMG_WIDTH, 3)),
+    BatchNormalization(),
     MaxPooling2D(pool_size=(2, 2)),
+
     Conv2D(64, (3, 3), activation='relu'),
+    BatchNormalization(),
     MaxPooling2D(pool_size=(2, 2)),
+    Dropout(0.3),
+
     Conv2D(128, (3, 3), activation='relu'),
+    BatchNormalization(),
     MaxPooling2D(pool_size=(2, 2)),
-    GlobalAveragePooling2D(),  # Adaptable a imágenes de diferentes tamaños
-    Dense(128, activation='relu'),
+    Dropout(0.4),
+
+    GlobalAveragePooling2D(),
+    Dense(256, activation='relu', kernel_regularizer=regularizers.l2(0.01)),
     Dropout(0.5),
-    Dense(NUM_CLASSES, activation='softmax')  # Salida para 7 clases
+
+    Dense(7, activation='softmax')  # 7 clases
 ])
 
 # Compilación del modelo
@@ -80,7 +92,7 @@ loss, accuracy = model.evaluate(validation_data)
 print(f"Loss: {loss}, Accuracy: {accuracy}")
 
 # Guardar el modelo
-model.save('almendro_disease_classifier.h5')
+model.save('almendro_disease_classifier.keras')
 
 # Gráfica de precisión
 plt.plot(history.history['accuracy'], label='Entrenamiento')
