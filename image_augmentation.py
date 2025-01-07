@@ -3,8 +3,6 @@ import albumentations as A
 import cv2
 import math
 
-
-# Aplicar la aumentación
 def augment_image(image_path):
     image = cv2.imread(image_path)
     height, width, channels = image.shape
@@ -25,7 +23,7 @@ def augment_image(image_path):
     augmented = augmentation_pipeline(image=image)
     return augmented["image"]
 
-issues_type = ["MF1","MF3","MF4","R1","R3","R4","R6"]
+issues_type = ["Healthy","MF1","MF3","MF4","R1","R3","R4","R6"]
 
 for issue in issues_type:
     total = len(os.listdir(f"dataset/{issue}/"))
